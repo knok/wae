@@ -128,9 +128,9 @@ def dcgan_encoder(opts, inputs, is_training=False, reuse=False):
 def ali_encoder(opts, inputs, is_training=False, reuse=False):
     num_units = opts['e_num_filters']
     layer_params = []
-    layer_params.append([5, 1, num_units / 8])
-    layer_params.append([4, 2, num_units / 4])
-    layer_params.append([4, 1, num_units / 2])
+    layer_params.append([5, 1, num_units // 8])
+    layer_params.append([4, 2, num_units // 4])
+    layer_params.append([4, 1, num_units // 2])
     layer_params.append([4, 2, num_units])
     layer_params.append([4, 1, num_units * 2])
     # For convolution: (n - k) / stride + 1 = s
@@ -140,7 +140,7 @@ def ali_encoder(opts, inputs, is_training=False, reuse=False):
     width = int(layer_x.get_shape()[2])
     assert height == width
     for i, (kernel, stride, channels) in enumerate(layer_params):
-        height = (height - kernel) / stride + 1
+        height = (height - kernel) // stride + 1
         width = height
         layer_x = ops.conv2d(
             opts, layer_x, channels, d_h=stride, d_w=stride,
@@ -159,7 +159,7 @@ def ali_encoder(opts, inputs, is_training=False, reuse=False):
         layer_x = ops.batch_norm(opts, layer_x, is_training,
                                  reuse, scope='hfinal_bn')
     layer_x = ops.lrelu(layer_x, 0.1)
-    layer_x = ops.conv2d(opts, layer_x, num_units / 2, d_h=1, d_w=1,
+    layer_x = ops.conv2d(opts, layer_x, num_units // 2, d_h=1, d_w=1,
                          scope='conv2d_1x1_2', conv_filters_dim=1)
 
     if opts['e_noise'] != 'gaussian':
@@ -180,11 +180,11 @@ def began_encoder(opts, inputs, is_training=False, reuse=False):
     for i in range(num_layers):
         if i % 3 < 2:
             if i != num_layers - 2:
-                ii = i - (i / 3)
-                scale = (ii + 1 - ii / 2)
+                ii = i - (i // 3)
+                scale = (ii + 1 - ii // 2)
             else:
                 ii = i - (i / 3)
-                scale = (ii - (ii - 1) / 2)
+                scale = (ii - (ii - 1) // 2)
             layer_x = ops.conv2d(opts, layer_x, num_units * scale, d_h=1, d_w=1,
                                  scope='h%d_conv' % i)
             layer_x = tf.nn.elu(layer_x)
@@ -209,11 +209,11 @@ def dcgan_decoder(opts, noise, is_training=False, reuse=False):
     batch_size = tf.shape(noise)[0]
     num_layers = opts['g_num_layers']
     if opts['g_arch'] == 'dcgan':
-        height = output_shape[0] / 2**num_layers
-        width = output_shape[1] / 2**num_layers
+        height = output_shape[0] // 2**num_layers
+        width = output_shape[1] // 2**num_layers
     elif opts['g_arch'] == 'dcgan_mod':
-        height = output_shape[0] / 2**(num_layers - 1)
-        width = output_shape[1] / 2**(num_layers - 1)
+        height = output_shape[0] // 2**(num_layers - 1)
+        width = output_shape[1] // 2**(num_layers - 1)
 
     h0 = ops.linear(
         opts, noise, num_units * height * width, scope='h0_lin')
@@ -223,7 +223,7 @@ def dcgan_decoder(opts, noise, is_training=False, reuse=False):
     for i in range(num_layers - 1):
         scale = 2**(i + 1)
         _out_shape = [batch_size, height * scale,
-                      width * scale, num_units / scale]
+                      width * scale, num_units // scale]
         layer_x = ops.deconv2d(opts, layer_x, _out_shape,
                                scope='h%d_deconv' % i)
         if opts['batch_norm']:
@@ -253,10 +253,10 @@ def ali_decoder(opts, noise, is_training=False, reuse=False):
     num_units = opts['g_num_filters']
     layer_params = []
     layer_params.append([4, 1, num_units])
-    layer_params.append([4, 2, num_units / 2])
-    layer_params.append([4, 1, num_units / 4])
-    layer_params.append([4, 2, num_units / 8])
-    layer_params.append([5, 1, num_units / 8])
+    layer_params.append([4, 2, num_units // 2])
+    layer_params.append([4, 1, num_units // 4])
+    layer_params.append([4, 2, num_units // 8])
+    layer_params.append([5, 1, num_units // 8])
     # For convolution: (n - k) / stride + 1 = s
     # For transposed: (s - 1) * stride + k = n
     layer_x = noise
@@ -277,7 +277,7 @@ def ali_decoder(opts, noise, is_training=False, reuse=False):
     assert width == data_width
 
     # Then two 1x1 convolutions.
-    layer_x = ops.conv2d(opts, layer_x, num_units / 8, d_h=1, d_w=1,
+    layer_x = ops.conv2d(opts, layer_x, num_units // 8, d_h=1, d_w=1,
                          scope='conv2d_1x1', conv_filters_dim=1)
     if opts['batch_norm']:
         layer_x = ops.batch_norm(opts, layer_x,
@@ -309,7 +309,7 @@ def began_decoder(opts, noise, is_training=False, reuse=False):
         else:
             if i != num_layers - 1:
                 # Upsampling by factor of 2 with NN
-                scale = 2 ** (i / 3 + 1)
+                scale = 2 ** (i // 3 + 1)
                 layer_x = ops.upsample_nn(layer_x, [scale * 8, scale * 8],
                                           scope='h%d_upsample' % i, reuse=reuse)
                 # Skip connection
