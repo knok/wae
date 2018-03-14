@@ -505,7 +505,7 @@ class WAE(object):
         blurr_vals = []
         encoding_changes = []
         enc_test_prev = None
-        batches_num = data.num_points / opts['batch_size']
+        batches_num = data.num_points // opts['batch_size']
         train_size = data.num_points
         self.num_pics = opts['plot_num_pics']
         self.fixed_noise = self.sample_pz(opts['plot_num_pics'])
@@ -811,7 +811,7 @@ def save_plots(opts, sample_train, sample_test,
         merged = np.vstack([recon, sample])
         r_ptr = 0
         w_ptr = 0
-        for _ in range(num_pics / 2):
+        for _ in range(num_pics // 2):
             merged[w_ptr] = sample[r_ptr]
             merged[w_ptr + 1] = recon[r_ptr]
             r_ptr += 1
@@ -919,7 +919,7 @@ def save_plots(opts, sample_train, sample_test,
     # The loss curves
     ax = plt.subplot(gs[1, 1])
     total_num = len(losses_rec)
-    x_step = max(total_num / 100, 1)
+    x_step = max(total_num // 100, 1)
     x = np.arange(1, len(losses_rec) + 1, x_step)
 
     y = np.log(np.abs(losses_rec[::x_step]))
@@ -930,14 +930,14 @@ def save_plots(opts, sample_train, sample_test,
 
     blurr_mod = np.tile(blurr_vals, (opts['print_every'], 1))
     blurr_mod = blurr_mod.transpose().reshape(-1)
-    x_step = max(len(blurr_mod)/ 100, 1)
+    x_step = max(len(blurr_mod)// 100, 1)
     x = np.arange(1, len(blurr_mod) + 1, x_step)
     y = np.log(blurr_mod[::x_step])
     plt.plot(x, y, linewidth=2, color='orange', label='log(sharpness)')
     if len(encoding_changes) > 0:
         x = np.arange(1, len(losses_rec) + 1)
         y = np.log(encoding_changes)
-        x_step = len(x) / len(y)
+        x_step = len(x) // len(y)
         plt.plot(x[::x_step], y, linewidth=2, color='green', label='log(encoding changes)')
     plt.grid(axis='y')
     plt.legend(loc='upper right')
