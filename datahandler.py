@@ -193,9 +193,9 @@ class Data(object):
         im = Image.open(utils.o_gfile((data_dir, filename), 'rb'))
         if self.crop_style == 'closecrop':
             # This method was used in DCGAN, pytorch-gan-collection, AVB, ...
-            left = (width - new_width) / 2
-            top = (height - new_height) / 2
-            right = (width + new_width) / 2
+            left = (width - new_width) // 2
+            top = (height - new_height) // 2
+            right = (width + new_width) // 2
             bottom = (height + new_height)/2
             im = im.crop((left, top, right, bottom))
             im = im.resize((64, 64), PIL.Image.ANTIALIAS)
