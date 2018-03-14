@@ -86,6 +86,11 @@ class WAE(object):
                          self.wae_lambda * self.penalty
         self.blurriness = self.compute_blurriness()
 
+        # summary writer
+        tf.summary.scalar("penalty", self.penalty)
+        tf.summary.scalar("loss_recon", self.loss_reconstruct)
+        tf.summary.scalar("wae_obj", self.wae_objective)
+
         if opts['e_pretrain']:
             self.loss_pretrain = self.pretrain_loss()
         else:
@@ -97,6 +102,14 @@ class WAE(object):
 
         self.add_optimizers()
         self.add_savers()
+
+        if opts['dataset'] == 'mnist':
+            tf.summary.image('input_image', tf.reshape(self.sample_points, [-1, 28, 28, 1]), 3)
+            tf.summary.image('decoded_image', tf.reshape(self.decoded, [-1, 28, 28, 1]), 3)
+        self.merged = tf.summary.merge_all()
+        self.summary_writer = tf.summary.FileWriter(opts['work_dir'],
+                                                    graph=self.sess.graph)
+                
         self.init = tf.global_variables_initializer()
 
     def add_model_placeholders(self):
@@ -423,13 +436,15 @@ class WAE(object):
             batch_images = data.data[data_ids].astype(np.float)
             batch_noise =  self.sample_pz(batch_size)
 
-            [_, loss_pretrain] = self.sess.run(
+            [_, loss_pretrain, summary] = self.sess.run(
                 [self.pretrain_opt,
-                 self.loss_pretrain],
+                 self.loss_pretrain,
+                 self.merged],
                 feed_dict={self.sample_points: batch_images,
                            self.sample_noise: batch_noise,
                            self.is_training: True})
-
+            self.summary_writer.add_summary(summary, counter)
+                
             if opts['verbose']:
                 logging.error('Step %d/%d, loss=%f' % (
                     step, steps_max, loss_pretrain))
