@@ -24,6 +24,7 @@ datashapes['cifar10'] = [32, 32, 3]
 datashapes['celebA'] = [64, 64, 3]
 datashapes['grassli'] = [64, 64, 3]
 datashapes['dsprites'] = [64, 64, 1]
+datashapes['dir64'] = [64, 64, 3]
 
 def _data_dir(opts):
     if opts['data_dir'].startswith("/"):
@@ -632,6 +633,47 @@ class DataHandler(object):
 
         self.data = Data(opts, X[:-test_size])
         self.test_data = Data(opts, X[-test_size:])
+        self.num_points = len(self.data)
+
+        logging.debug('Loading Done.')
+
+    def _load_dir64(self, opts):
+        """Load 64x64 color images
+        """
+        logging.debug('Loading 64x64 color dataset')
+
+        data_dir = _data_dir(opts)
+        num_samples = 0
+        _files = []
+        for root, dirs, files in os.walkdir(data_dir):
+            for f in files:
+                fname = os.path.join(root, f)
+                if fname.endswith('.jpg') or fname.endswith('.png'):
+                    _files.append(fname)
+                    num_samples += 1
+        x_train = np.zeros((num_samples, 3, 64, 64), dtype=np.uint8)
+        y_train = np.zeros((num_samples,), dtype=np.uint8)
+        for i, f in enumerate(_files):
+            img = Image.open(f).convert('RGB')
+            img = img.resize((64, 64))
+            x_train[i, :, :, :] = img
+
+        X = np.array(x_train, dtype=np.float32) / 255.0
+        y = y_train
+        
+        seed = 123
+        np.random.seed(seed)
+        np.random.shuffle(X)
+        np.random.seed(seed)
+        np.random.shuffle(y)
+        np.random.seed()
+
+        self.data_shape = (32, 32, 3)
+
+        self.data = Data(opts, X)
+        self.test_data = Data(opts, X[-50:])
+        self.labels = y
+        self.test_labels = y[-50:]
         self.num_points = len(self.data)
 
         logging.debug('Loading Done.')
