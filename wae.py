@@ -106,6 +106,9 @@ class WAE(object):
         if opts['dataset'] == 'mnist':
             tf.summary.image('input_image', tf.reshape(self.sample_points, [-1, 28, 28, 1]), 3)
             tf.summary.image('decoded_image', tf.reshape(self.decoded, [-1, 28, 28, 1]), 3)
+        elif opts['dataset'] == 'dir64':
+            tf.summary.image('input_image', tf.reshape(self.sample_points, [-1, 64, 64, 3]), 3)
+            tf.summary.image('decoded_image', tf.reshape(self.decoded, [-1, 64, 64, 3]), 3)
         self.merged = tf.summary.merge_all()
         self.summary_writer = tf.summary.FileWriter(opts['work_dir'],
                                                     graph=self.sess.graph)
