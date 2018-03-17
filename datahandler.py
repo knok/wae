@@ -654,7 +654,7 @@ class DataHandler(object):
                 if fname.endswith('.jpg') or fname.endswith('.png'):
                     _files.append(fname)
                     num_samples += 1
-        x_train = np.zeros((num_samples, 3, 64, 64), dtype=np.uint8)
+        x_train = np.zeros((num_samples, 64, 64, 3), dtype=np.uint8)
         y_train = np.zeros((num_samples,), dtype=np.uint8)
         for i, f in enumerate(_files):
             img = Image.open(f).convert('RGB')
