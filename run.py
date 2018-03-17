@@ -29,6 +29,7 @@ parser.add_argument("--enc_noise",
                          " 'implicit': implicit encoder,"\
                          " 'add_noise': add noise before feeding "\
                          "to deterministic encoder")
+parser.add_argument("--epoch_num", help='number of epoch', type=int)
 
 FLAGS = parser.parse_args()
 
@@ -67,6 +68,8 @@ def main():
         opts['lambda'] = FLAGS.wae_lambda
     if FLAGS.enc_noise is not None:
         opts['e_noise'] = FLAGS.enc_noise
+    if FLAGS.epoch_num is not None:
+        opts['epoch_num'] = FLAGS.epoch_num
 
     if opts['verbose']:
         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(message)s')
