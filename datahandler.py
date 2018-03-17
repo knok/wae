@@ -253,6 +253,8 @@ class DataHandler(object):
             self._load_celebA(opts)
         elif opts['dataset'] == 'grassli':
             self._load_grassli(opts)
+        elif opts['dataset'] == 'dir64':
+            self._load_dir64(opts)
         else:
             raise ValueError('Unknown %s' % opts['dataset'])
 
@@ -262,7 +264,8 @@ class DataHandler(object):
                           'guitars',
                           'cifar10',
                           'celebA',
-                          'grassli']
+                          'grassli',
+                          'dir64']
 
         if opts['input_normalize_sym'] and opts['dataset'] not in sym_applicable:
             raise Exception('Can not normalyze this dataset')
