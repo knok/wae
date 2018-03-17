@@ -648,7 +648,7 @@ class DataHandler(object):
         data_dir = _data_dir(opts)
         num_samples = 0
         _files = []
-        for root, dirs, files in os.walkdir(data_dir):
+        for root, dirs, files in os.walk(data_dir):
             for f in files:
                 fname = os.path.join(root, f)
                 if fname.endswith('.jpg') or fname.endswith('.png'):
