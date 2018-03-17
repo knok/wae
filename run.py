@@ -48,6 +48,8 @@ def main():
         opts = configs.config_grassli
     elif FLAGS.exp == 'grassli_small':
         opts = configs.config_grassli_small
+    elif FLAGS.exp == 'dir64':
+        opts = configs.config_dir64
     else:
         assert False, 'Unknown experiment configuration'
 
