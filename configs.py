@@ -246,3 +246,56 @@ config_grassli_small['e_num_layers'] = 2
 config_grassli_small['e_num_filters'] = 64
 config_grassli_small['print_every'] = 50
 config_grassli_small['lr_schedule'] = 'plateau'
+
+# Dir64 config
+
+config_dir64 = {}
+config_dir64['dataset'] = 'dir64'
+config_dir64['verbose'] = True
+config_dir64['save_every_epoch'] = 20
+config_dir64['print_every'] = 500
+config_dir64['work_dir'] = 'results_dir64'
+config_dir64['plot_num_pics'] = 30
+config_dir64['plot_num_cols'] = 5
+
+config_dir64['input_normalize_sym'] = True
+config_dir64['data_dir'] = 'dir64'
+config_dir64['dir64_crop'] = 'closecrop' # closecrop, resizecrop
+
+config_dir64['optimizer'] = 'adam' # adam, sgd
+config_dir64['adam_beta1'] = 0.5
+config_dir64['lr'] = 0.0005 #0.001 for WAE-MMD and 0.0003 for WAE-GAN
+config_dir64['lr_adv'] = 0.001
+config_dir64['lr_schedule'] = 'manual_smooth' #manual, plateau, or a number
+config_dir64['batch_size'] = 50
+config_dir64['epoch_num'] = 50
+config_dir64['init_std'] = 0.0099999
+config_dir64['init_bias'] = 0.0
+config_dir64['batch_norm'] = True
+config_dir64['batch_norm_eps'] = 1e-05
+config_dir64['batch_norm_decay'] = 0.9
+config_dir64['conv_filters_dim'] = 5
+
+config_dir64['e_pretrain'] = True
+config_dir64['e_pretrain_sample_size'] = 256
+config_dir64['e_noise'] = 'add_noise'
+config_dir64['e_num_filters'] = 1024
+config_dir64['e_num_layers'] = 4
+config_dir64['e_arch'] = 'dcgan' # mlp, dcgan, ali
+
+config_dir64['g_num_filters'] = 1024
+config_dir64['g_num_layers'] = 4
+config_dir64['g_arch'] = 'dcgan_mod' # mlp, dcgan, dcgan_mod, ali
+
+config_dir64['gan_p_trick'] = True
+config_dir64['d_num_layers'] = 4
+config_dir64['d_num_filters'] = 1024
+
+config_dir64['zdim'] = 2
+config_dir64['pz'] = 'normal' # uniform, normal, sphere
+config_dir64['cost'] = 'l2sq' #l2, l2sq, l1
+config_dir64['pz_scale'] = 1.
+config_dir64['z_test'] = 'mmd'
+config_dir64['mmd_kernel'] = 'IMQ' # RBF, IMQ
+config_dir64['lambda'] = 100.
+config_dir64['lambda_schedule'] = 'constant'
