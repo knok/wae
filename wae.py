@@ -497,6 +497,9 @@ class WAE(object):
             logging.error('WARNING: possible bug in the worst 2d projection')
         return proj_mat, dot_prod
 
+    def restore_checkpoint(self, cp):
+        self.saver.restore(self.sess, cp)
+    
     def train(self, data):
         opts = self.opts
         if opts['verbose']:
